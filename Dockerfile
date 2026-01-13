@@ -1,11 +1,14 @@
-# Use Java 17 image
+# Use Java 17
 FROM eclipse-temurin:17-jdk
 
-# Set working directory inside container
+# Set working directory
 WORKDIR /app
 
-# Copy project files
+# Copy all project files
 COPY . .
+
+# Give execute permission to mvnw (IMPORTANT FIX)
+RUN chmod +x mvnw
 
 # Build Spring Boot application
 RUN ./mvnw clean package -DskipTests
