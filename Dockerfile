@@ -1,17 +1,28 @@
-# Use Java 17 with Maven
-FROM maven:3.9.6-eclipse-temurin-17
+# -------- BUILD STAGE --------
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy project files
-COPY . .
+# Copy pom.xml first (cache dependencies)
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Build Spring Boot app (NO mvnw)
+# Copy source code
+COPY src ./src
+
+# Build the application
 RUN mvn clean package -DskipTests
 
-# Expose port
+# -------- RUN STAGE --------
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+# Copy the built jar from build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose Spring Boot port
 EXPOSE 8080
 
-# Run the jar
-CMD ["java", "-jar", "target/*.jar"]
+# Run the app
+ENTRYPOINT ["java", "-jar", "app.jar"]
