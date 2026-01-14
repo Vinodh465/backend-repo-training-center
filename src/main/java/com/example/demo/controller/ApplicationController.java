@@ -29,12 +29,12 @@ public class ApplicationController {
             Application application = new Application();
             application.setName(request.get("name"));
             application.setEmail(request.get("email"));
-            application.setPhone(request.get("phone"));
-            application.setYear(request.get("year"));
-            application.setCourse(request.get("course"));
+            application.setPhone(request.get("phoneNumber"));
+            application.setYear(request.get("yearOfStudy"));
+            application.setCourse(request.get("courseInterested"));
             application.setCollege(request.get("college"));
             application.setStatus("PENDING");
-            
+
             Application saved = applicationRepository.save(application);
             return ResponseEntity.ok(saved);
         } catch (Exception e) {
@@ -42,6 +42,7 @@ public class ApplicationController {
             return ResponseEntity.badRequest().body("Error submitting application: " + e.getMessage());
         }
     }
+
 
     // Get all applications
     @GetMapping("/all")
